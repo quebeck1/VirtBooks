@@ -1,0 +1,32 @@
+services:
+  phpmyadmin:
+    image: phpmyadmin:5.2.3
+    container_name: pma-virt-books
+    environment:
+      PMA_HOST: mysql
+      PMA_PORT: 3306
+    ports:
+      - "8080:80"
+    depends_on:
+      - mysql
+  mysql:
+    build:
+      context: ./docker
+      dockerfile: mysql.Dockerfile
+    image: vb-mysql:latest
+    container_name: mysql-virt-books
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+  webserver:
+    build:
+      context: ./docker
+      dockerfile: apache.Dockerfile
+    image: vb-apache:latest
+    container_name: apache-virt-books
+    volumes:
+      - ./www:/var/www/html
+    ports:
+      - "80:80"
+networks:
+  default:
+    name: "virt_books_network"
